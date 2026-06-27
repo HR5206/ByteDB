@@ -14,7 +14,11 @@ public class WriteAheadLog {
 
     public synchronized void append(String key, String value) throws IOException {
         // Simple TSV format: key\tvalue\n (tabs avoid commas in values)
-        writer.write(key.replace("\t", " ") + "\t" + value.replace("\t", " ") + "\n");
+        if (value == null) {
+            writer.write(key.replace("\t", " ") + "\n");
+        } else {
+            writer.write(key.replace("\t", " ") + "\t" + value.replace("\t", " ") + "\n");
+        }
         writer.flush(); // ensure durability
     }
 
@@ -25,7 +29,11 @@ public class WriteAheadLog {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\t", 2);
-                if (parts.length == 2) records.add(parts);
+                if (parts.length == 2) {
+                    records.add(parts);
+                } else if (parts.length == 1) {
+                    records.add(new String[]{parts[0], null});
+                }
             }
         }
         return records;

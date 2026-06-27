@@ -1,0 +1,7 @@
+PUT city Hyderabad
+PUT lang Java
+GET city
+SCAN city lang
+DELETE city
+GET city
+EXIT

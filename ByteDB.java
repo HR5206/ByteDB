@@ -1,9 +1,10 @@
 import java.io.IOException;
+import java.nio.file.*;
 import java.util.*;
 
 public class ByteDB {
     private static final long MEMTABLE_FLUSH_THRESHOLD = 2_000_000; // bytes approx.
-    private final MemTable memTable;
+    final MemTable memTable;
     private final LRUCache<String, String> cache;
     private final Path sstDir = Paths.get("data/sst");
     private final CompactionManager compactionMgr;
@@ -44,7 +45,7 @@ public class ByteDB {
         cache.put(key, null);
     }
 
-    private void flushMemTable() throws IOException {
+    void flushMemTable() throws IOException {
         // dump sorted entries to a new SSTable
         String sstPath = sstDir.resolve("sst_" + System.currentTimeMillis() + ".sst").toString();
         SSTableWriter writer = new SSTableWriter(sstPath, memTable.size());

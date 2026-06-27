@@ -1,8 +1,8 @@
 import java.io.IOException;
 
 public class MemTable {
-    private final SkipList<String, String> skiplist = new SkipList<>();
-    private final WriteAheadLog wal;
+    SkipList<String, String> skiplist = new SkipList<>();
+    WriteAheadLog wal;
 
     public MemTable(String walFile) throws IOException { this.wal = new WriteAheadLog(walFile); }
 

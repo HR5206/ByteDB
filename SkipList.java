@@ -1,10 +1,12 @@
+import java.util.*;
+
 public class SkipList<K extends Comparable<K>, V> {
     private static final int MAX_LEVEL = 16;
-    private final Node<K, V> head = new Node<>(null, null, MAX_LEVEL);
+    final Node<K, V> head = new Node<>(null, null, MAX_LEVEL);
     private int level = 1;
     private int size = 0;
 
-    private static class Node<K, V> {
+    static class Node<K, V> {
         final K key;
         V value;
         final Node<K, V>[] forward;
