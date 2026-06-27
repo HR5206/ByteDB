@@ -65,4 +65,25 @@ public class SkipList<K extends Comparable<K>, V> {
     }
 
     public int size() { return size; }
+
+    public Iterator<Map.Entry<K, V>> iteratorFrom(K start) {
+        Node<K, V> x = head;
+        for (int i = level - 1; i >= 0; i--) {
+            while (x.forward[i] != null && x.forward[i].key.compareTo(start) < 0) {
+                x = x.forward[i];
+            }
+        }
+        // now x.forward[0] is the first node >= start (or null)
+        final Node<K, V> first = (x.forward[0] != null) ? x.forward[0] : null;
+        return new Iterator<>() {
+            Node<K, V> cur = first;
+            @Override public boolean hasNext() { return cur != null; }
+            @Override public Map.Entry<K, V> next() {
+                if (cur == null) throw new NoSuchElementException();
+                Map.Entry<K, V> e = new AbstractMap.SimpleImmutableEntry<>(cur.key, cur.value);
+                cur = cur.forward[0];
+                return e;
+            }
+        };
+    }
 }

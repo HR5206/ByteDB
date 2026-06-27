@@ -96,4 +96,36 @@ public class SSTableReader {
     }
 
     public void close() throws IOException { channel.close(); }
+
+    private int iterIdx = -1;
+
+    public String nextKey() {
+        iterIdx++;
+        return (iterIdx < keys.size()) ? keys.get(iterIdx) : null;
+    }
+
+    public boolean advance() {
+        return nextKey() != null;
+    }
+
+    public String currentKey() {
+        return (iterIdx >= 0 && iterIdx < keys.size()) ? keys.get(iterIdx) : null;
+    }
+
+    public String currentValue() throws IOException {
+        String k = currentKey();
+        return (k != null) ? get(k) : null;
+    }
+
+    public long findOffset(String startKey) throws IOException {
+        // binary search over the in‑memory index (keys list) to locate the first key >= startKey
+        int lo = 0, hi = keys.size() - 1, idx = keys.size();
+        while (lo <= hi) {
+            int mid = (lo + hi) >>> 1;
+            int cmp = keys.get(mid).compareTo(startKey);
+            if (cmp >= 0) { idx = mid; hi = mid - 1; } else lo = mid + 1;
+        }
+        return (idx == keys.size()) ? channel.size() : indexOffsets.get(idx);
+    }
 }
+
